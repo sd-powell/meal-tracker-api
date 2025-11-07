@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Meal {
+  id        Int      @id @default(autoincrement())
+  name      String
+  protein   Float
+  carbs     Float
+  fats      Float
+  calories  Float
+  tagId     String   @unique
+  logs      Log[]   @relation("MealLogs")
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  tagId     String
+  mealName  String
+  timestamp DateTime @default(now())
+  status    String
+
+  meal      Meal?    @relation("MealLogs", fields: [tagId], references: [tagId])
+}

@@ -1,0 +1,13 @@
+POST http://localhost:3000/api/logs
+Content-Type: application/json
+
+{
+    "tagId": "MEAL001",
+    "status": "eaten"
+}
+
+### Get all logs
+GET http://localhost:3000/api/logs
+
+### Delete log by tagId
+DELETE http://localhost:3000/api/logs/tag/MEAL001
