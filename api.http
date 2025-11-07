@@ -11,3 +11,42 @@ GET http://localhost:3000/api/logs
 
 ### Delete log by tagId
 DELETE http://localhost:3000/api/logs/tag/MEAL001
+
+### Update a log status
+PUT http://localhost:3000/api/logs/1
+Content-Type: application/json
+
+{
+    "status": "prepped"
+}
+
+### Add a meal
+POST http://localhost:3000/api/meals
+Content-Type: application/json
+
+{
+    "name": "Beef Stir Fry",
+    "protein": 40,
+    "carbs": 20,
+    "fats": 10,
+    "calories": 420,
+    "tagId": "MEAL002"
+}
+
+### Log a meal scan
+POST http://localhost:3000/api/logs
+Content-Type: application/json
+
+{
+    "tagId": "MEAL002",
+    "status": "eaten"
+}
+
+### Update log status
+PUT http://localhost:3000/api/logs/1
+Content-Type: application/json
+
+{
+    "tagId": "MEAL002",
+    "status": "prepped"
+}

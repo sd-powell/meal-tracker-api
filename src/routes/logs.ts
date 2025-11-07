@@ -47,6 +47,32 @@ router.get("/", async (_req: Request, res: Response) => {
     }
 });
 
+// PUT /api/logs/:id - update status
+router.put("/:id", async (req: Request, res: Response) => {
+    const { status } = req.body;
+    const logId = Number(req.params.id);
+
+    if (!["prepped", "eaten"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    try {
+        const updated = await prisma.log.update({
+            where: { id: logId },
+            data: { status },
+        });
+        res.json(updated);
+    } catch (error) {
+        const err = error as any;
+        console.error(error);
+        if (err.code === 'P2025') {
+            // Prisma error code for "Record to update does not exist."
+            return res.status(404).json({ message: "Log not found" });
+        }
+        res.status(500).json({ message: "Failed to update log" });
+    }
+});
+
 // DELETE /api/logs/:id - delete a specific log entry by ID
 router.delete("/:id", async (req: Request, res: Response) => {
     const logId = parseInt(req.params.id);
