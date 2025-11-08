@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meal Tracker NFC</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <h1>Meal Tracker</h1>
+    <button id="scanBtn">Scan Meal Tag</button>
+    <p id="status">Ready to scan</p>
+    <footer>Powered by Node + Prisma + Web NFC</footer>
+
+    <script>
+        const apiUrl = "https://meal-tracker.onrender.com/api/logs"; // replace if needed
+
+        async function startScan() {
+            if (!("NDEFReader" in window)) {
+                document.getElementById("status").innerText =
+                    "Web NFC not supported on this device or browser.";
+                return;
+            }
+
+            const nfc = new NDEFReader();
+            try {
+                await nfc.scan();
+                document.getElementById("status").innerText = "📡 Scanning for tags...";
+
+                nfc.onreading = async (event) => {
+                    const record = event.message.records[0];
+                    const decoder = new TextDecoder();
+                    const tagId = decoder.decode(record.data);
+
+                    document.getElementById("status").innerText =
+                        `Tag detected: ${tagId}\nLogging meal...`;
+
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ tagId, status: "eaten" }),
+                    });
+
+                    if (response.ok) {
+                        document.getElementById("status").innerText =
+                            `Meal logged successfully (${tagId})`;
+                    } else {
+                        const data = await response.json();
+                        document.getElementById("status").innerText =
+                            `Error: ${data.message || "Failed to log meal"}`;
+                    }
+                };
+            } catch (err) {
+                console.error(err);
+                document.getElementById("status").innerText = "NFC scan failed.";
+            }
+        }
+
+        document.getElementById("scanBtn").addEventListener("click", startScan);
+    </script>
+</body>
+
+</html>
