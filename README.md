@@ -1,5 +1,7 @@
 # Meal Tracker API
 
+![Meal Tracker Banner Image](documentation/readme/og-image.webp)
+
 A simple RFID-enabled meal tracking API built with **TypeScript**, **Express**, and **Prisma**.  
 Designed to log meal prep containers and track macros via RFID/NFC tags.
 
