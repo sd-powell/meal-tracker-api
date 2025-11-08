@@ -22,8 +22,8 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api/meals", mealsRouter);
 app.use("/api/logs", logsRouter);
 
-// Fallback: send frontend for all other routes
-app.get("/*", (_req, res) => {
+// Catch-all route for SPA frontend (Express 5+ safe)
+app.get(/.*/, (_req, res) => {
     res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
