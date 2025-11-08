@@ -24,9 +24,9 @@ app.use("/api/logs", logsRouter);
 
 // Catch-all route for SPA frontend (Express 5+ safe)
 app.get(/.*/, (_req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+    res.sendFile(path.join(__dirname, "../public/nfc.html"));
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
