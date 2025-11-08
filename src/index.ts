@@ -23,9 +23,9 @@ app.use("/api/meals", mealsRouter);
 app.use("/api/logs", logsRouter);
 
 // Only handle frontend routes, not API calls
-app.get("/*", (req, res, next) => {
+app.use((req, res, next) => {
     if (req.path.startsWith("/api")) {
-        return next(); // let API routes handle this
+        return next();
     }
     res.sendFile(path.join(__dirname, "../public/nfc.html"));
 });
