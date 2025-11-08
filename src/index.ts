@@ -15,18 +15,18 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Serve static files (e.g. NFC page)
+// Serve static files (frontend: index.html, css, etc.)
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Routes
+// API routes
 app.use("/api/meals", mealsRouter);
 app.use("/api/logs", logsRouter);
 
-// Default route
-app.get("/", (_req, res) => {
-    res.send("Meal Tracker API is running");
+// Fallback: send frontend for all other routes
+app.get("*", (_req, res) => {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 // Start server
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Server is running on port ${PORT}`));
