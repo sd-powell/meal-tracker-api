@@ -166,6 +166,7 @@ router.get("/summary", async (_req: Request, res: Response) => {
     }
 });
 
+// GET /api/logs/tag/:tagId - Log a meal directly via URL (for NFC scans)
 router.get("/tag/:tagId", async (req, res) => {
     try {
         const { tagId } = req.params;
