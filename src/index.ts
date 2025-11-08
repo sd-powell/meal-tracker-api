@@ -23,7 +23,7 @@ app.use("/api/meals", mealsRouter);
 app.use("/api/logs", logsRouter);
 
 // Only handle frontend routes, not API calls
-app.get("*", (req, res, next) => {
+app.get("/*", (req, res, next) => {
     if (req.path.startsWith("/api")) {
         return next(); // let API routes handle this
     }
