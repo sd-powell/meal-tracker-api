@@ -118,4 +118,52 @@ router.delete("/tag/:tagId", async (req: Request, res: Response) => {
     }
 });
 
+//GET /api/summary - return today's total macros
+router.get("/summary", async (_req: Request, res: Response) => {
+    try {
+        // Get the start and end of today
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Get all logs from today
+        const todayLogs = await prisma.log.findMany({
+            where: {
+                timestamp: {
+                    gte: startOfDay,
+                    lte: endOfDay,
+                },
+            },
+        });
+
+        // Get all meals from those logs
+        const tagIds = todayLogs.map((log: { tagId: string }) => log.tagId);
+        const meals = await prisma.meal.findMany({
+            where: { tagId: { in: tagIds } }
+        });
+
+        // Aggregate totals
+        const totals = meals.reduce(
+            (acc: { protein: number; carbs: number; fats: number; calories: number }, meal: any) => ({
+                protein: acc.protein + meal.protein,
+                carbs: acc.carbs + meal.carbs,
+                fats: acc.fats + meal.fats,
+                calories: acc.calories + meal.calories,
+            }),
+            { protein: 0, carbs: 0, fats: 0, calories: 0 }
+        );
+
+        res.json({
+            date: startOfDay.toISOString().split("T")[0],
+            logs: todayLogs.length,
+            totals,
+        });
+    } catch (error) {
+        const err = error as any;
+        console.error(err);
+        res.status(500).json({ message: "Failed to calculate summary" });
+    }
+});
+
 export default router;

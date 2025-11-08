@@ -50,3 +50,6 @@ Content-Type: application/json
     "tagId": "MEAL002",
     "status": "prepped"
 }
+
+### Get today's log summary
+GET http://localhost:3000/api/logs/summary
