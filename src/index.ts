@@ -22,8 +22,11 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api/meals", mealsRouter);
 app.use("/api/logs", logsRouter);
 
-// Catch-all route for SPA frontend (Express 5+ safe)
-app.get(/.*/, (_req, res) => {
+// Only handle frontend routes, not API calls
+app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+        return next(); // let API routes handle this
+    }
     res.sendFile(path.join(__dirname, "../public/nfc.html"));
 });
 
