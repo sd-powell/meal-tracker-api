@@ -17,7 +17,7 @@ router.post("/", async (req: Request, res: Response) => {
         if (!meal) {
             return res.status(404).json({ message: "Meal not found for this tagId" });
         }
-        
+
         // Create a new log entry linked to that meal
         const newLog = await prisma.log.create({
             data: {
@@ -163,6 +163,37 @@ router.get("/summary", async (_req: Request, res: Response) => {
         const err = error as any;
         console.error(err);
         res.status(500).json({ message: "Failed to calculate summary" });
+    }
+});
+
+router.get("/tag/:tagId", async (req, res) => {
+    try {
+        const { tagId } = req.params;
+
+        // find meal by tag
+        const meal = await prisma.meal.findUnique({ where: { tagId } });
+        if (!meal) {
+            return res.status(404).send(`<h2>Meal not found for tag ${tagId}</h2>`);
+        }
+
+        // create a log
+        await prisma.log.create({
+            data: { tagId, mealName: meal.name, status: "eaten" },
+        });
+
+        // show a friendly page
+        res.send(`
+            <html>
+                <body style="font-family:sans-serif;text-align:center;padding:2rem">
+                <h2>Meal logged successfully!</h2>
+                <p>${meal.name} (${tagId})</p>
+                <p><a href="/">Back to tracker</a></p>
+                </body>
+            </html>
+    `);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("<h2>Server error logging meal</h2>");
     }
 });
 
